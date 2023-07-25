@@ -5,7 +5,7 @@ import unittest
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
-from src.directory_create import directory_create  # noqa: E402
+from my_method.directory_create import directory_create  # noqa: E402
 
 
 class UnitTest(unittest.TestCase):
