@@ -1,4 +1,4 @@
-import os
+from .common import os
 
 
 def directory_listing(
