@@ -1,3 +1,6 @@
+from .common import Union
+
+
 def input_int(print_str: str) -> int:
     """
     int入力
@@ -12,14 +15,7 @@ def input_int(print_str: str) -> int:
     int
         入力数字
     """
-    while True:
-        try:
-            num = int(input(print_str + "入力:"))
-            if input(print_str + f":{num}[Yn]:").lower() == "y":
-                break
-        except ValueError:
-            pass
-    return num
+    return _input(print_str=print_str, type=int)
 
 
 def input_float(print_str: str) -> float:
@@ -36,14 +32,7 @@ def input_float(print_str: str) -> float:
     float
         入力数字
     """
-    while True:
-        try:
-            num = float(input(print_str + "入力:"))
-            if input(print_str + f":{num}[Yn]:").lower() == "y":
-                break
-        except ValueError:
-            pass
-    return num
+    return _input(print_str=print_str, type=float)
 
 
 def input_str(print_str: str) -> str:
@@ -60,11 +49,51 @@ def input_str(print_str: str) -> str:
     str
         入力文字列
     """
-    while True:
+    return _input(print_str=print_str, type=str)
+
+
+def _input(
+    print_str: str, type: Union[int, str, float], over_count: int = 1024
+) -> Union[int, str, float]:
+    """
+    コンソール入力処理
+
+    Parameters
+    ----------
+    print_str : str
+        表示文字列
+    type : Union[int, str, float]
+        出力タイプ
+    over_count : int
+        オーバーフロー回数 by default 1024
+
+    Returns
+    -------
+    Union[int, str, float]
+        入力されたデータ
+
+    Raises
+    ------
+    TypeError
+        予期しないタイプ
+    OverflowError
+        無限ループ対策
+    """
+    for _ in range(over_count):
         try:
-            sec = input(print_str + "入力:")
-            if input(print_str + f":{sec}[Yn]:").lower() == "y":
+            data = input(print_str + "入力:")
+            if type == int:
+                data = int(data)
+            elif type == float:
+                data = float(data)
+            elif type == str:
+                pass
+            else:
+                raise TypeError
+            if input(print_str + f":{data}[Yn]:").lower() == "y":
                 break
         except ValueError:
             pass
-    return sec
+    else:
+        raise OverflowError
+    return data
