@@ -15,6 +15,7 @@ class UnitTest(unittest.TestCase):
             ".mp4",
             ".wav",
         )
+        self.name = r"^te.*.txt$"
         self.only_file = ["test.mp4", "test.wav"]
         self.not_file = ["test.json", "test.txt"]
         return super().setUp()
@@ -27,6 +28,9 @@ class UnitTest(unittest.TestCase):
 
     def test3(self):
         self.assertEqual(directory_listing(exc_ext=self.ext), self.not_file)
+
+    def test4(self):
+        self.assertEqual(directory_listing(name=self.name), ["test.txt"])
 
 
 if __name__ == "__main__":
