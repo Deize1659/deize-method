@@ -1,4 +1,4 @@
-from .common import Union
+from .common import Union, datetime
 
 
 def input_int(print_str: str) -> int:
@@ -52,9 +52,28 @@ def input_str(print_str: str) -> str:
     return _input(print_str=print_str, type=str)
 
 
+def input_min_sec(print_str: str) -> datetime:
+    """
+    入力時間からdatetimeオブジェクトを出力
+
+    Parameters
+    ----------
+    print_str : str
+        表示文字列
+
+    Returns
+    -------
+    int
+        _description_
+    """
+    return _input(print_str=print_str, type=datetime)
+
+
 def _input(
-    print_str: str, type: Union[int, str, float], over_count: int = 1024
-) -> Union[int, str, float]:
+    print_str: str,
+    type: Union[int, str, float, datetime],
+    over_count: int = 1024,
+) -> Union[int, str, float, datetime]:
     """
     コンソール入力処理
 
@@ -62,7 +81,7 @@ def _input(
     ----------
     print_str : str
         表示文字列
-    type : Union[int, str, float]
+    type : Union[int, str, float, datetime]
         出力タイプ
     over_count : int
         オーバーフロー回数 by default 1024
@@ -81,13 +100,15 @@ def _input(
     """
     for _ in range(over_count):
         try:
-            data = input(print_str + "入力:")
+            data: str | int | float = input(print_str + "入力:")
             if type == int:
                 data = int(data)
             elif type == float:
                 data = float(data)
             elif type == str:
                 pass
+            elif type == datetime:
+                data = datetime.strptime(data, "%M:%S")
             else:
                 raise TypeError
             if input(print_str + f":{data}[Yn]:").lower() == "y":
