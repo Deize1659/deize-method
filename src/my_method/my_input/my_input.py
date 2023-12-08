@@ -1,7 +1,7 @@
 from ..common import Union, datetime
 
 
-def input_int(print_str: str) -> int:
+def input_int(print_str: str, unit: str = "") -> int:
     """
     int入力
 
@@ -9,16 +9,18 @@ def input_int(print_str: str) -> int:
     ----------
     print_str : str
         表示文字列
+    unit : str
+        単位 by default ""
 
     Returns
     -------
     int
         入力数字
     """
-    return _input(print_str=print_str, type=int)
+    return _input(print_str=print_str, type=int, unit=unit)
 
 
-def input_float(print_str: str) -> float:
+def input_float(print_str: str, unit: str = "") -> float:
     """
     float入力
 
@@ -26,16 +28,18 @@ def input_float(print_str: str) -> float:
     ----------
     print_str : str
         表示文字列
+    unit : str
+        単位 by default ""
 
     Returns
     -------
     float
         入力数字
     """
-    return _input(print_str=print_str, type=float)
+    return _input(print_str=print_str, type=float, unit=unit)
 
 
-def input_str(print_str: str) -> str:
+def input_str(print_str: str, unit: str = "") -> str:
     """
     文字列出力
 
@@ -43,13 +47,15 @@ def input_str(print_str: str) -> str:
     ----------
     print_str : str
         表示文字列
+    unit : str
+        単位 by default ""
 
     Returns
     -------
     str
         入力文字列
     """
-    return _input(print_str=print_str, type=str)
+    return _input(print_str=print_str, type=str, unit=unit)
 
 
 def input_min_sec(print_str: str) -> datetime:
@@ -73,6 +79,7 @@ def _input(
     print_str: str,
     type: Union[int, str, float, datetime],
     over_count: int = 1024,
+    unit: str = "",
 ) -> Union[int, str, float, datetime]:
     """
     コンソール入力処理
@@ -85,6 +92,8 @@ def _input(
         出力タイプ
     over_count : int
         オーバーフロー回数 by default 1024
+    unit : str
+        単位 by default ""
 
     Returns
     -------
@@ -98,23 +107,26 @@ def _input(
     OverflowError
         無限ループ対策
     """
+    result: Union[int, str, float, datetime]
+    if unit:
+        unit = f"[{unit}]"
     for _ in range(over_count):
         try:
-            data: str | int | float = input(print_str + "入力:")
+            data = input(print_str + f"入力{unit}:")
             if type == int:
-                data = int(data)
+                result = int(data)
             elif type == float:
-                data = float(data)
+                result = float(data)
             elif type == str:
-                pass
+                result = data
             elif type == datetime:
-                data = datetime.strptime(data, "%M:%S")
+                result = datetime.strptime(data, "%M:%S")
             else:
                 raise TypeError
-            if input(print_str + f":{data}[Yn]:").lower() == "y":
+            if input(data + "? [Yn]:").lower() == "y":
                 break
         except ValueError:
             pass
     else:
         raise OverflowError
-    return data
+    return result
