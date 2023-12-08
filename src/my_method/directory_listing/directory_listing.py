@@ -1,4 +1,4 @@
-from .common import Final, os
+from ..common import Final, os
 
 
 class DirectoryListing:

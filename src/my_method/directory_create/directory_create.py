@@ -1,4 +1,4 @@
-from .common import os
+from ..common import os
 
 
 def directory_create(directory_name: str) -> bool:
