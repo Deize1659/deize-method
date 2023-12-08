@@ -1,4 +1,4 @@
-from .common import Union, datetime
+from ..common import Union, datetime
 
 
 def input_int(print_str: str) -> int:
