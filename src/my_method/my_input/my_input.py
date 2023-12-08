@@ -75,9 +75,26 @@ def input_min_sec(print_str: str) -> datetime:
     return _input(print_str=print_str, type=datetime)
 
 
+def input_bool(print_str: str) -> bool:
+    """
+    bool入力
+
+    Parameters
+    ----------
+    print_str : str
+        表示文字列
+
+    Returns
+    -------
+    bool
+        入力bool
+    """
+    return _input(print_str=print_str, type=bool)
+
+
 def _input(
     print_str: str,
-    type: Union[int, str, float, datetime],
+    type: Union[int, str, float, datetime, bool],
     over_count: int = 1024,
     unit: str = "",
 ) -> Union[int, str, float, datetime]:
@@ -107,24 +124,39 @@ def _input(
     OverflowError
         無限ループ対策
     """
-    result: Union[int, str, float, datetime]
+    result: Union[int, str, float, datetime, bool]
     if unit:
         unit = f"[{unit}]"
     for _ in range(over_count):
         try:
-            data = input(print_str + f"入力{unit}:")
-            if type == int:
-                result = int(data)
-            elif type == float:
-                result = float(data)
-            elif type == str:
-                result = data
-            elif type == datetime:
-                result = datetime.strptime(data, "%M:%S")
+            if type == bool:
+                data = input(print_str + "入力[Yn]:")
+                if data.lower() == "y":
+                    result = True
+                elif data.lower() == "n":
+                    result = False
+                else:
+                    raise ValueError
+                if result:
+                    if input("Y? [Yn]:").lower() == "y":
+                        break
+                else:
+                    if input("n? [Yn]:").lower() == "y":
+                        break
             else:
-                raise TypeError
-            if input(data + "? [Yn]:").lower() == "y":
-                break
+                data = input(print_str + f"入力{unit}:")
+                if type == int:
+                    result = int(data)
+                elif type == float:
+                    result = float(data)
+                elif type == str:
+                    result = data
+                elif type == datetime:
+                    result = datetime.strptime(data, "%M:%S")
+                else:
+                    raise TypeError
+                if input(data + "? [Yn]:").lower() == "y":
+                    break
         except ValueError:
             pass
     else:
