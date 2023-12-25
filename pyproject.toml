@@ -1,32 +1,44 @@
-[build-system]
-requires = ["setuptools", "setuptools_scm"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "ymorishima030-method"
-authors = [
-    {name = "ymorishima030", email = "ymorishima@hochiki.co.jp"},
-]
-description = "ymorishima030s method"
+[tool.poetry]
+name = "deize-method"
+version = "0.0.0"
+description = "deizeが使用するメソッド"
+authors = ["Deize <ddeize.git@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.11"
-license = {file = "LICENSE"}
-classifiers =[
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
-dynamic = ["version"]
+packages = [{include = "my_method", from = "src"}]
+license = "MIT"
 
-[project.urls]
-"Homepage" = "https://github.com/ymorishima030/ymorishima030-method"
-"Bug Tracker" = "https://github.com/ymorishima030/ymorishima030-method/issues"
+[tool.poetry.dependencies]
+python = "^3.11"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
 
-[tool.setuptools.dynamic]
-version = {attr = "my_method.__version__.__version__"}
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.7.1"
+pyproject-flake8 = "^6.1.0"
+isort = "^5.13.2"
+black = "^23.12.0"
+ipykernel = "^6.27.1"
 
-[tool.setuptools_scm]
-write_to = "src/my_method/__version__.py"
+[tool.black]
+line-length = 119
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 119
+extend-ignore = "E203, W502, W503"
+exclude = ".venv"
+
+[tool.mypy]
+ignore_missing_imports = true
+follow_imports = "skip"
+disallow_untyped_defs = true
+
+[tool.poetry-dynamic-versioning]
+enable = true
+format = "{base}"
+pattern = "^(?P<base>\\d+\\.\\d+\\.\\d+)$"
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.2.0"]
+build-backend = "poetry_dynamic_versioning.backend"

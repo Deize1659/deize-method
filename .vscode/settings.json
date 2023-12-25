@@ -1,0 +1,16 @@
+{
+  "cSpell.words": ["deize"],
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "black-formatter.args": [],
+  "isort.args": [],
+  "flake8.path": ["${interpreter}", "-m", "pflake8"],
+  "flake8.args": [],
+  "mypy-type-checker.args": []
+}
