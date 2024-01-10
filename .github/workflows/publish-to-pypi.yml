@@ -37,4 +37,4 @@ jobs:
 
       - name: Poetry publish
         run: |
-          poetry publish --build -r pypi
+          poetry publish --build -r
