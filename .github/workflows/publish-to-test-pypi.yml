@@ -1,9 +1,9 @@
-name: Publish python distribution to PyPI
+name: Publish python distribution to testPyPI
 
 on:
-  push:
-    tags:
-      - "*.*.*"
+  pull_request:
+    branches:
+      - "main"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,7 +28,8 @@ jobs:
 
       - name: Poetry config set
         run: |
-          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+          poetry config repositories.testpypi https://test.pypi.org/legacy/
+          poetry config pypi-token.testpypi ${{ secrets.TEST_PYPI_TOKEN }}
 
       - name: Install poetry dependencies
         run: |
@@ -37,4 +38,4 @@ jobs:
 
       - name: Poetry publish
         run: |
-          poetry publish --build -r pypi
+          poetry publish --build -r testpypi
