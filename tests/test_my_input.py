@@ -6,7 +6,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
 from my_method.my_input import input_int  # noqa: E402
-from my_method.my_input import _input, input_float, input_str  # noqa: E402
+from my_method.my_input import input_float, input_str  # noqa: E402
 
 
 class UnitTest(unittest.TestCase):

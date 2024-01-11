@@ -2,12 +2,12 @@ from ..common import Final, os
 
 
 class DirectoryListing:
-    _LISTING_ALL: Final[int] = 0
-    _LISTING_FILE: Final[int] = 1
-    _LISTING_DIR: Final[int] = 2
+    _ALL_FILE: Final[int] = 0
+    _FILE_ONLY: Final[int] = 1
+    _DIR_ONLY: Final[int] = 2
 
     @classmethod
-    def file_listing(
+    def file_tuple_gen(
         cls,
         source: str,
         targets: tuple[str] | str = ("",),
@@ -28,10 +28,10 @@ class DirectoryListing:
         tuple[str]
             リスト化
         """
-        return cls._listing(source, cls._LISTING_FILE, targets, exc_targets)
+        return cls._tuple_gen(source, cls._FILE_ONLY, targets, exc_targets)
 
     @classmethod
-    def dir_listing(
+    def dir_tuple_gen(
         cls,
         source: str,
         targets: tuple[str] | str = ("",),
@@ -52,10 +52,10 @@ class DirectoryListing:
         tuple[str]
             リスト化
         """
-        return cls._listing(source, cls._LISTING_DIR, targets, exc_targets)
+        return cls._tuple_gen(source, cls._DIR_ONLY, targets, exc_targets)
 
     @classmethod
-    def all_listing(
+    def all_file_tuple_gen(
         cls,
         source: str,
         targets: tuple[str] | str = ("",),
@@ -76,10 +76,82 @@ class DirectoryListing:
         tuple[str]
             リスト化
         """
-        return cls._listing(source, cls._LISTING_ALL, targets, exc_targets)
+        return cls._tuple_gen(source, cls._ALL_FILE, targets, exc_targets)
 
     @classmethod
-    def _listing(
+    def file_listing(
+        cls,
+        source: str,
+        targets: tuple[str] | str = ("",),
+        exc_targets: tuple[str] | str = ("",),
+    ) -> list[str]:
+        """
+        ファイル名リスト化メソッド
+
+        Parameters
+        ----------
+        source : str
+            リスト化ディレクトリパス
+        target : tuple[str], optional
+            検索文字列タプル, by default ()
+
+        Returns
+        -------
+        tuple[str]
+            リスト化
+        """
+        return cls._list_gen(source, cls._FILE_ONLY, targets, exc_targets)
+
+    @classmethod
+    def dir_listing(
+        cls,
+        source: str,
+        targets: tuple[str] | str = ("",),
+        exc_targets: tuple[str] | str = ("",),
+    ) -> list[str]:
+        """
+        ディレクトリ名リスト化メソッド
+
+        Parameters
+        ----------
+        source : str
+            リスト化ディレクトリパス
+        target : tuple[str], optional
+            検索文字列タプル, by default ()
+
+        Returns
+        -------
+        tuple[str]
+            リスト化
+        """
+        return cls._list_gen(source, cls._DIR_ONLY, targets, exc_targets)
+
+    @classmethod
+    def all_listing(
+        cls,
+        source: str,
+        targets: tuple[str] | str = ("",),
+        exc_targets: tuple[str] | str = ("",),
+    ) -> list[str]:
+        """
+        ファイル名、ディレクトリ名リスト化メソッド
+
+        Parameters
+        ----------
+        source : str
+            リスト化ディレクトリパス
+        target : tuple[str], optional
+            検索文字列タプル, by default ()
+
+        Returns
+        -------
+        tuple[str]
+            リスト化
+        """
+        return cls._list_gen(source, cls._ALL_FILE, targets, exc_targets)
+
+    @classmethod
+    def _tuple_gen(
         cls,
         source: str,
         pattern: int,
@@ -105,16 +177,15 @@ class DirectoryListing:
         tuple[str]
             _description_
         """
-        global _LISTING_DIR, _LISTING_FILE, _LISTING_ALL
         targets, exc_targets = cls._str_to_tuple(targets, exc_targets)
         files: list[str] = []
         for name in os.listdir(source):
             file_path = os.path.join(source, name)
-            if pattern == cls._LISTING_DIR:
+            if pattern == cls._DIR_ONLY:
                 is_pattern = os.path.isdir(file_path)
-            elif pattern == cls._LISTING_FILE:
+            elif pattern == cls._FILE_ONLY:
                 is_pattern = os.path.isfile(file_path)
-            elif pattern == cls._LISTING_ALL:
+            elif pattern == cls._ALL_FILE:
                 is_pattern = True
             else:
                 is_pattern = False
@@ -123,6 +194,35 @@ class DirectoryListing:
             if is_pattern and has_target and not has_exc_target:
                 files.append(name)
         return tuple(files)  # type: ignore[return-value]
+
+    @classmethod
+    def _list_gen(
+        cls,
+        source: str,
+        pattern: int,
+        targets: tuple[str, ...] | str = ("",),
+        exc_targets: tuple[str, ...] | str = ("",),
+    ) -> list[str]:
+        """
+        _summary_
+
+        Parameters
+        ----------
+        source : str
+            _description_
+        pattern : int
+            _description_
+        targets : tuple[str] | str, optional
+            _description_, by default ("",)
+        exc_targets : tuple[str] | str, optional
+            _description_, by default ("",)
+
+        Returns
+        -------
+        list[str]
+            _description_
+        """
+        return list(cls._tuple_gen(source, pattern, targets, exc_targets))
 
     @staticmethod
     def _str_to_tuple(

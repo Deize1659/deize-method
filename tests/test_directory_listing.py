@@ -2,13 +2,15 @@ import os
 import shutil
 import unittest
 
-from my_method import DirectoryListing as dl
+import pytest
+
+from my_method.directory_listing import DirectoryListing as dl
 
 
 class TestDirectoryListing(unittest.TestCase):
     def setUp(self) -> None:
         self.cwd = os.getcwd()
-        self.test_dir = os.path.join(self.cwd, "test_dir")
+        self.test_dir = os.path.join(self.cwd, "tests", "test_dir")
         os.mkdir(self.test_dir)
         os.chdir(self.test_dir)
         self.text_ext = ".txt"
@@ -25,140 +27,173 @@ class TestDirectoryListing(unittest.TestCase):
         os.mkdir(os.path.join(self.test_dir, self.test2))
         self.test_txt_path = os.path.join(self.test_dir, self.test_txt)
         self.test_wav_path = os.path.join(self.test_dir, self.test_wav)
-        with open(self.test_txt, "w"):
+        with open(self.test_txt_path, "w"):
             pass
-        with open(self.test_wav, "w"):
+        with open(self.test_wav_path, "w"):
             pass
 
     def tearDown(self) -> None:
         os.chdir(self.cwd)
         shutil.rmtree(self.test_dir)
 
-    def test_file_listing(self) -> None:
-        self.assertEqual(dl.file_listing(self.test_dir), (self.test_txt, self.test_wav))
-        self.assertEqual(dl.file_listing(self.test_dir, self.text_ext), (self.test_txt,))
-        self.assertEqual(dl.file_listing(self.test_dir, (self.text_ext,)), (self.test_txt,))
-        self.assertEqual(dl.file_listing(self.test_dir, self.wav_ext), (self.test_wav,))
-        self.assertEqual(dl.file_listing(self.test_dir, (self.wav_ext,)), (self.test_wav,))
-        self.assertEqual(dl.file_listing(self.test_dir, (self.text_ext, self.wav_ext)), (self.test_txt, self.test_wav))
-        self.assertEqual(dl.file_listing(self.test_dir, "error"), ())
-        self.assertEqual(dl.file_listing(self.test_dir, exc_targets=self.test_txt), (self.test_wav,))
-        self.assertEqual(dl.file_listing(self.test_dir, exc_targets=(self.test_txt,)), (self.test_wav,))
-        self.assertEqual(dl.file_listing(self.test_dir, exc_targets=self.test_wav), (self.test_txt,))
-        self.assertEqual(dl.file_listing(self.test_dir, exc_targets=(self.test_wav,)), (self.test_txt,))
-        self.assertEqual(dl.file_listing(self.test_dir, exc_targets=(self.test_txt, self.test_wav)), ())
-        self.assertEqual(dl.file_listing(self.test_dir, exc_targets="error"), (self.test_txt, self.test_wav))
-
-    def test_dir_listing(self) -> None:
-        self.assertEqual(dl.dir_listing(self.test_dir), (self.test1, self.test2))
-        self.assertEqual(dl.dir_listing(self.test_dir, self.test1_num), (self.test1,))
-        self.assertEqual(dl.dir_listing(self.test_dir, (self.test1_num,)), (self.test1,))
-        self.assertEqual(dl.dir_listing(self.test_dir, self.test2_num), (self.test2,))
-        self.assertEqual(dl.dir_listing(self.test_dir, (self.test2_num,)), (self.test2,))
-        self.assertEqual(dl.dir_listing(self.test_dir, (self.test1_num, self.test2_num)), (self.test1, self.test2))
-        self.assertEqual(dl.dir_listing(self.test_dir, "error"), ())
-        self.assertEqual(dl.dir_listing(self.test_dir, exc_targets=self.test1), (self.test2,))
-        self.assertEqual(dl.dir_listing(self.test_dir, exc_targets=(self.test1,)), (self.test2,))
-        self.assertEqual(dl.dir_listing(self.test_dir, exc_targets=self.test2), (self.test1,))
-        self.assertEqual(dl.dir_listing(self.test_dir, exc_targets=(self.test2,)), (self.test1,))
-        self.assertEqual(dl.dir_listing(self.test_dir, exc_targets=(self.test1, self.test2)), ())
-        self.assertEqual(dl.dir_listing(self.test_dir, exc_targets="error"), (self.test1, self.test2))
-
-    def test_all_listing(self) -> None:
-        self.assertEqual(dl.all_listing(self.test_dir), (self.test1, self.test2, self.test_txt, self.test_wav))
-        self.assertEqual(dl.all_listing(self.test_dir, self.test1_num), (self.test1,))
-        self.assertEqual(dl.all_listing(self.test_dir, (self.test1_num,)), (self.test1,))
-        self.assertEqual(dl.all_listing(self.test_dir, self.test2_num), (self.test2,))
-        self.assertEqual(dl.all_listing(self.test_dir, (self.test2_num,)), (self.test2,))
-        self.assertEqual(dl.all_listing(self.test_dir, self.text_ext), (self.test_txt,))
-        self.assertEqual(dl.all_listing(self.test_dir, (self.text_ext,)), (self.test_txt,))
-        self.assertEqual(dl.all_listing(self.test_dir, self.wav_ext), (self.test_wav,))
-        self.assertEqual(dl.all_listing(self.test_dir, (self.wav_ext,)), (self.test_wav,))
-        self.assertEqual(dl.all_listing(self.test_dir, (self.test1_num, self.test2_num)), (self.test1, self.test2))
-        self.assertEqual(dl.all_listing(self.test_dir, (self.test1_num, self.wav_ext)), (self.test1, self.test_wav))
-        self.assertEqual(dl.all_listing(self.test_dir, (self.test2_num, self.text_ext)), (self.test2, self.test_txt))
-        self.assertEqual(dl.all_listing(self.test_dir, (self.text_ext, self.wav_ext)), (self.test_txt, self.test_wav))
+    def test_file_tuple_gen(self) -> None:
+        self.assertEqual(dl.file_tuple_gen(self.test_dir), (self.test_txt, self.test_wav))
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, self.text_ext), (self.test_txt,))
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, (self.text_ext,)), (self.test_txt,))
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, self.wav_ext), (self.test_wav,))
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, (self.wav_ext,)), (self.test_wav,))
         self.assertEqual(
-            dl.all_listing(self.test_dir, (self.test1_num, self.test2_num, self.text_ext)),
+            dl.file_tuple_gen(self.test_dir, (self.text_ext, self.wav_ext)), (self.test_txt, self.test_wav)
+        )
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, "error"), ())
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, exc_targets=self.test_txt), (self.test_wav,))
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, exc_targets=(self.test_txt,)), (self.test_wav,))
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, exc_targets=self.test_wav), (self.test_txt,))
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, exc_targets=(self.test_wav,)), (self.test_txt,))
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, exc_targets=(self.test_txt, self.test_wav)), ())
+        self.assertEqual(dl.file_tuple_gen(self.test_dir, exc_targets="error"), (self.test_txt, self.test_wav))
+
+    def test_dir_tuple_gen(self) -> None:
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir), (self.test1, self.test2))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, self.test1_num), (self.test1,))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, (self.test1_num,)), (self.test1,))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, self.test2_num), (self.test2,))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, (self.test2_num,)), (self.test2,))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, (self.test1_num, self.test2_num)), (self.test1, self.test2))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, "error"), ())
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, exc_targets=self.test1), (self.test2,))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, exc_targets=(self.test1,)), (self.test2,))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, exc_targets=self.test2), (self.test1,))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, exc_targets=(self.test2,)), (self.test1,))
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, exc_targets=(self.test1, self.test2)), ())
+        self.assertEqual(dl.dir_tuple_gen(self.test_dir, exc_targets="error"), (self.test1, self.test2))
+
+    def test_all_file_tuple_gen(self) -> None:
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir), (self.test1, self.test2, self.test_txt, self.test_wav))
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir, self.test1_num), (self.test1,))
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir, (self.test1_num,)), (self.test1,))
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir, self.test2_num), (self.test2,))
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir, (self.test2_num,)), (self.test2,))
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir, self.text_ext), (self.test_txt,))
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir, (self.text_ext,)), (self.test_txt,))
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir, self.wav_ext), (self.test_wav,))
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir, (self.wav_ext,)), (self.test_wav,))
+        self.assertEqual(
+            dl.all_file_tuple_gen(self.test_dir, (self.test1_num, self.test2_num)), (self.test1, self.test2)
+        )
+        self.assertEqual(
+            dl.all_file_tuple_gen(self.test_dir, (self.test1_num, self.wav_ext)), (self.test1, self.test_wav)
+        )
+        self.assertEqual(
+            dl.all_file_tuple_gen(self.test_dir, (self.test2_num, self.text_ext)), (self.test2, self.test_txt)
+        )
+        self.assertEqual(
+            dl.all_file_tuple_gen(self.test_dir, (self.text_ext, self.wav_ext)), (self.test_txt, self.test_wav)
+        )
+        self.assertEqual(
+            dl.all_file_tuple_gen(self.test_dir, (self.test1_num, self.test2_num, self.text_ext)),
             (self.test1, self.test2, self.test_txt),
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, (self.test1_num, self.test2_num, self.wav_ext)),
+            dl.all_file_tuple_gen(self.test_dir, (self.test1_num, self.test2_num, self.wav_ext)),
             (self.test1, self.test2, self.test_wav),
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, (self.test1_num, self.text_ext, self.wav_ext)),
+            dl.all_file_tuple_gen(self.test_dir, (self.test1_num, self.text_ext, self.wav_ext)),
             (self.test1, self.test_txt, self.test_wav),
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, (self.test2_num, self.text_ext, self.wav_ext)),
+            dl.all_file_tuple_gen(self.test_dir, (self.test2_num, self.text_ext, self.wav_ext)),
             (self.test2, self.test_txt, self.test_wav),
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, (self.test1_num, self.test2_num, self.text_ext, self.wav_ext)),
+            dl.all_file_tuple_gen(self.test_dir, (self.test1_num, self.test2_num, self.text_ext, self.wav_ext)),
             (self.test1, self.test2, self.test_txt, self.test_wav),
         )
-        self.assertEqual(dl.all_listing(self.test_dir, "error"), ())
+        self.assertEqual(dl.all_file_tuple_gen(self.test_dir, "error"), ())
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=self.test1), (self.test2, self.test_txt, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=self.test1), (self.test2, self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test1,)), (self.test2, self.test_txt, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test1,)), (self.test2, self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=self.test2), (self.test1, self.test_txt, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=self.test2), (self.test1, self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test2,)), (self.test1, self.test_txt, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test2,)), (self.test1, self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=self.test_txt), (self.test1, self.test2, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=self.test_txt), (self.test1, self.test2, self.test_wav)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test_txt,)), (self.test1, self.test2, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test_txt,)), (self.test1, self.test2, self.test_wav)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=self.test_wav), (self.test1, self.test2, self.test_txt)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=self.test_wav), (self.test1, self.test2, self.test_txt)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test_wav,)), (self.test1, self.test2, self.test_txt)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test_wav,)), (self.test1, self.test2, self.test_txt)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test1, self.test2)), (self.test_txt, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test1, self.test2)), (self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test1, self.test_txt)), (self.test2, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test1, self.test_txt)), (self.test2, self.test_wav)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test1, self.test_wav)), (self.test2, self.test_txt)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test1, self.test_wav)), (self.test2, self.test_txt)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test2, self.test_txt)), (self.test1, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test2, self.test_txt)), (self.test1, self.test_wav)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test2, self.test_wav)), (self.test1, self.test_txt)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test2, self.test_wav)), (self.test1, self.test_txt)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test_txt, self.test_wav)), (self.test1, self.test2)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test_txt, self.test_wav)), (self.test1, self.test2)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test1, self.test2, self.test_txt)), (self.test_wav,)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test1, self.test2, self.test_txt)), (self.test_wav,)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test1, self.test2, self.test_wav)), (self.test_txt,)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test1, self.test2, self.test_wav)), (self.test_txt,)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test1, self.test_txt, self.test_wav)), (self.test2,)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test1, self.test_txt, self.test_wav)), (self.test2,)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test2, self.test_txt, self.test_wav)), (self.test1,)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test2, self.test_txt, self.test_wav)), (self.test1,)
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets=(self.test1, self.test2, self.test_txt, self.test_wav)), ()
+            dl.all_file_tuple_gen(self.test_dir, exc_targets=(self.test1, self.test2, self.test_txt, self.test_wav)),
+            (),
         )
         self.assertEqual(
-            dl.all_listing(self.test_dir, exc_targets="error"), (self.test1, self.test2, self.test_txt, self.test_wav)
+            dl.all_file_tuple_gen(self.test_dir, exc_targets="error"),
+            (self.test1, self.test2, self.test_txt, self.test_wav),
         )
+
+    @pytest.mark.parametrize(
+        "args, expected",
+        [
+            ((), (self.test_txt, self.test_wav)),
+            ((self.text_ext,), (self.test_txt,)),
+            (((self.text_ext,),), (self.test_txt,)),
+            ((self.wav_ext,), (self.test_wav,)),
+            (((self.wav_ext,),), (self.test_wav,)),
+            (((self.text_ext, self.wav_ext),), (self.test_txt, self.test_wav)),
+            (("error",), ()),
+            ((self.test_txt,), (self.test_wav,)),
+            (((self.test_txt,),), (self.test_wav,)),
+            ((self.test_wav,), (self.test_txt,)),
+            (((self.test_wav,),), (self.test_txt,)),
+            (((self.test_txt, self.test_wav),), ()),
+            (("error",), (self.test_txt, self.test_wav)),
+        ],
+    )
+    def test_file_tuple_gen(self) -> None:
+        pass
 
 
 if __name__ == "__main__":
