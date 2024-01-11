@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: release
+      url: https://test.pypi.org/project/deize-method
     permissions:
       id-token: write
     strategy:
@@ -42,5 +43,5 @@ jobs:
       - name: Publish package distributions to testPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repositry-url: https://test.pypi.org/legacy/
           skip-existing: true
+          repository-url: https://test.pypi.org/legacy/
