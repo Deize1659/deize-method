@@ -7,6 +7,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: release
+      url: https://test.pypi.org/p/deize-method
+    permissions:
+      id-token: write
     strategy:
       matrix:
         python-version: [3.11]
@@ -39,5 +44,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           skip-existing: true
-          password: ${{ secrets.TEST_PYPI_TOKEN }}
-          repositry-url: https://test.pypi.org/legacy/
+          repository-url: https://test.pypi.org/legacy/
