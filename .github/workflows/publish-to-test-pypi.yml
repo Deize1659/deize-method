@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: release
-      url: https://test.pypi.org/project/deize-method
+      url: https://test.pypi.org/p/deize-method
     permissions:
       id-token: write
     strategy:
