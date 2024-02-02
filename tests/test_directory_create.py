@@ -2,20 +2,17 @@ import os
 import sys
 import unittest
 
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(project_root)
-
-from my_method.directory_create import directory_create  # noqa: E402
+from src.my_method.directory_create import directory_create
 
 
 class UnitTest(unittest.TestCase):
-    def test1(self):
+    def test1(self) -> None:
         self.assertEqual(directory_create("test1"), True)
 
-    def test2(self):
+    def test2(self) -> None:
         self.assertEqual(directory_create("test1"), True)
 
-    def test3(self):
+    def test3(self) -> None:
         self.assertEqual(directory_create(1), False)
 
 

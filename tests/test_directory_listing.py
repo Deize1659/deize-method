@@ -2,7 +2,7 @@ import os
 import shutil
 import unittest
 
-from my_method import DirectoryListing as dl
+from src.my_method.directory_listing import DirectoryListing as dl
 
 
 class TestDirectoryListing(unittest.TestCase):
