@@ -1,6 +1,6 @@
 import unittest
 
-from my_method.version_check import VersionCheck
+from src.my_method.version_check import VersionCheck
 
 
 class TestVersionCheck(unittest.TestCase):
