@@ -10,6 +10,7 @@
   },
   "black-formatter.args": [],
   "isort.args": [],
+  "flake8.path": ["${interpreter}", "-m", "pflake8"],
   "flake8.args": [],
   "mypy-type-checker.args": [],
   "python.testing.pytestArgs": ["tests"],
