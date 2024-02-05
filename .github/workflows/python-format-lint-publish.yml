@@ -3,7 +3,7 @@ name: Python-Format-Lint-Test-Publish
 on:
   pull_request:
     branches:
-      - master
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
