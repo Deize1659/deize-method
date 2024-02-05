@@ -1,4 +1,4 @@
-from ..common import Final, os
+from ..common import Final, Path, os
 
 
 class DirectoryListing:
@@ -12,7 +12,7 @@ class DirectoryListing:
         source: str,
         targets: tuple[str] | str = ("",),
         exc_targets: tuple[str] | str = ("",),
-    ) -> tuple[str]:
+    ) -> tuple[str, ...]:
         """
         ファイル名リスト化メソッド
 
@@ -36,7 +36,7 @@ class DirectoryListing:
         source: str,
         targets: tuple[str] | str = ("",),
         exc_targets: tuple[str] | str = ("",),
-    ) -> tuple[str]:
+    ) -> tuple[str, ...]:
         """
         ディレクトリ名リスト化メソッド
 
@@ -60,7 +60,7 @@ class DirectoryListing:
         source: str,
         targets: tuple[str] | str = ("",),
         exc_targets: tuple[str] | str = ("",),
-    ) -> tuple[str]:
+    ) -> tuple[str, ...]:
         """
         ファイル名、ディレクトリ名リスト化メソッド
 
@@ -85,7 +85,7 @@ class DirectoryListing:
         pattern: int,
         targets: tuple[str, ...] | str = ("",),
         exc_targets: tuple[str, ...] | str = ("",),
-    ) -> tuple[str]:
+    ) -> tuple[str, ...]:
         """
         _summary_
 
@@ -105,7 +105,6 @@ class DirectoryListing:
         tuple[str]
             _description_
         """
-        global _LISTING_DIR, _LISTING_FILE, _LISTING_ALL
         targets, exc_targets = cls._str_to_tuple(targets, exc_targets)
         files: list[str] = []
         for name in os.listdir(source):
@@ -149,3 +148,121 @@ class DirectoryListing:
         if isinstance(exc_targets, str):
             exc_targets = (exc_targets,)
         return (targets, exc_targets)
+
+
+class DirectoryListingPathlib(DirectoryListing):
+    @classmethod
+    def file_listing(
+        cls,
+        source: Path,
+        targets: tuple[str] | str = ("",),
+        exc_targets: tuple[str] | str = ("",),
+    ) -> tuple[str, ...]:
+        """
+        ファイル名リスト化メソッド
+
+        Parameters
+        ----------
+        source : Path
+            リスト化ディレクトリパス
+        target : tuple[str], optional
+            検索文字列タプル, by default ()
+
+        Returns
+        -------
+        tuple[str]
+            リスト化
+        """
+        return cls._listing(source, cls._LISTING_FILE, targets, exc_targets)
+
+    @classmethod
+    def dir_listing(
+        cls,
+        source: Path,
+        targets: tuple[str] | str = ("",),
+        exc_targets: tuple[str] | str = ("",),
+    ) -> tuple[str, ...]:
+        """
+        ディレクトリ名リスト化メソッド
+
+        Parameters
+        ----------
+        source : Path
+            リスト化ディレクトリパス
+        target : tuple[str], optional
+            検索文字列タプル, by default ()
+
+        Returns
+        -------
+        tuple[str]
+            リスト化
+        """
+        return cls._listing(source, cls._LISTING_DIR, targets, exc_targets)
+
+    @classmethod
+    def all_listing(
+        cls,
+        source: Path,
+        targets: tuple[str] | str = ("",),
+        exc_targets: tuple[str] | str = ("",),
+    ) -> tuple[str, ...]:
+        """
+        ファイル名、ディレクトリ名リスト化メソッド
+
+        Parameters
+        ----------
+        source : Path
+            リスト化ディレクトリパス
+        target : tuple[str], optional
+            検索文字列タプル, by default ()
+
+        Returns
+        -------
+        tuple[str]
+            リスト化
+        """
+        return cls._listing(source, cls._LISTING_ALL, targets, exc_targets)
+
+    @classmethod
+    def _listing(
+        cls,
+        source: Path,
+        pattern: int,
+        targets: tuple[str, ...] | str = ("",),
+        exc_targets: tuple[str, ...] | str = ("",),
+    ) -> tuple[str, ...]:
+        """
+        _summary_
+
+        Parameters
+        ----------
+        source : Path
+            _description_
+        pattern : int
+            _description_
+        targets : tuple[str] | str, optional
+            _description_, by default ("",)
+        exc_targets : tuple[str] | str, optional
+            _description_, by default ("",)
+
+        Returns
+        -------
+        tuple[str]
+            _description_
+        """
+        targets, exc_targets = cls._str_to_tuple(targets, exc_targets)
+        files: list[str] = []
+        for path in source.iterdir():
+            if pattern == cls._LISTING_DIR:
+                is_pattern = path.is_dir()
+            elif pattern == cls._LISTING_FILE:
+                is_pattern = path.is_file()
+            elif pattern == cls._LISTING_ALL:
+                is_pattern = True
+            else:
+                is_pattern = False
+            has_target = any(target in path.name for target in targets)
+            has_exc_target = any(exc_target in path.name for exc_target in exc_targets) and exc_targets != ("",)
+            if is_pattern and has_target and not has_exc_target:
+                files.append(path.name)
+        return tuple(files)

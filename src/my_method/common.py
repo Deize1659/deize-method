@@ -3,6 +3,7 @@ import re
 import subprocess
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Final, Union
 
-__all__ = ["os", "re", "datetime", "Final", "Union", "subprocess", "time"]
+__all__ = ["os", "re", "datetime", "Final", "Union", "subprocess", "time", "Path"]

@@ -1,3 +1,3 @@
-from .directory_listing import DirectoryListing
+from .directory_listing import DirectoryListing, DirectoryListingPathlib
 
-__all__ = ["DirectoryListing"]
+__all__ = ["DirectoryListing", "DirectoryListingPathlib"]
