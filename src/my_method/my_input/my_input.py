@@ -1,4 +1,4 @@
-from ..common import Union, datetime
+from ..common import Any, Optional, Union, datetime
 
 
 def input_int(print_str: str, unit: str = "") -> int:
@@ -17,7 +17,7 @@ def input_int(print_str: str, unit: str = "") -> int:
     int
         入力数字
     """
-    return _input(print_str=print_str, type=int, unit=unit)
+    return int(_input(print_str=print_str, type=int, unit=unit))
 
 
 def input_float(print_str: str, unit: str = "") -> float:
@@ -36,7 +36,7 @@ def input_float(print_str: str, unit: str = "") -> float:
     float
         入力数字
     """
-    return _input(print_str=print_str, type=float, unit=unit)
+    return float(_input(print_str=print_str, type=float, unit=unit))
 
 
 def input_str(print_str: str, unit: str = "") -> str:
@@ -55,7 +55,7 @@ def input_str(print_str: str, unit: str = "") -> str:
     str
         入力文字列
     """
-    return _input(print_str=print_str, type=str, unit=unit)
+    return str(_input(print_str=print_str, type=str, unit=unit))
 
 
 def input_min_sec(print_str: str) -> datetime:
@@ -89,15 +89,15 @@ def input_bool(print_str: str) -> bool:
     bool
         入力bool
     """
-    return _input(print_str=print_str, type=bool)
+    return bool(_input(print_str=print_str, type=bool))
 
 
 def _input(
     print_str: str,
-    type: Union[int, str, float, datetime, bool],
+    type: type,
     over_count: int = 1024,
     unit: str = "",
-) -> Union[int, str, float, datetime]:
+) -> Any:
     """
     コンソール入力処理
 
@@ -143,6 +143,12 @@ def _input(
                 else:
                     if input("n? [Yn]:").lower() == "y":
                         break
+            elif type == datetime:
+                date = _datetime_input(print_str)
+                if date:
+                    result = date
+                    if input(str(date) + "? [Yn]:").lower() == "y":
+                        break
             else:
                 data = input(print_str + f"入力{unit}:")
                 if type == int:
@@ -162,3 +168,29 @@ def _input(
     else:
         raise OverflowError
     return result
+
+
+def _datetime_input(print_str: str) -> Optional[datetime]:
+    need_date = ["西暦", "月", "日", "時", "分", "秒", "ミリ秒"]
+    data = []
+    for date in need_date:
+        data.append(input(f"{print_str}の{date}を入力(空白で現在時刻):"))
+    result = datetime.now()
+    try:
+        if data[0]:
+            result = result.replace(year=int(data[0]))
+        if data[1]:
+            result = result.replace(month=int(data[1]))
+        if data[2]:
+            result = result.replace(day=int(data[2]))
+        if data[3]:
+            result = result.replace(hour=int(data[3]))
+        if data[4]:
+            result = result.replace(minute=int(data[4]))
+        if data[5]:
+            result = result.replace(second=int(data[5]))
+        if data[6]:
+            result = result.replace(microsecond=int(data[6]))
+        return result
+    except ValueError:
+        return None

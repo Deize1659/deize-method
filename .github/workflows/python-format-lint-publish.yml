@@ -44,7 +44,7 @@ jobs:
       - name: Install Poetry and Cache
         uses: ./.github/actions/cache-poetry
         with:
-          pyhon-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}
           poetry-version: ${{ matrix.poetry-version }}
           poetry-dynamic-versioning-version: ${{ matrix.poetry-dynamic-versioning-version }}
 
@@ -52,8 +52,6 @@ jobs:
         uses: ./.github/actions/cache-packages
         with:
           python-version: ${{ matrix.python-version }}
-          virtualenvs_create: ${{ env.VIRTUALENVS_CREATE}}
-          virtualenvs_in_project: ${{ env.VIRTUALENVS_IN_PROJECT}}
 
   FormatLintCommit:
     needs: [Build, SetGlovalConstants]
@@ -89,8 +87,6 @@ jobs:
         uses: ./.github/actions/cache-packages
         with:
           python-version: ${{ matrix.python-version }}
-          virtualenvs_create: ${{ env.VIRTUALENVS_CREATE}}
-          virtualenvs_in_project: ${{ env.VIRTUALENVS_IN_PROJECT}}
 
       - name: Run format
         run: |
@@ -143,8 +139,6 @@ jobs:
         uses: ./.github/actions/cache-packages
         with:
           python-version: ${{ matrix.python-version }}
-          virtualenvs_create: ${{ env.VIRTUALENVS_CREATE}}
-          virtualenvs_in_project: ${{ env.VIRTUALENVS_IN_PROJECT}}
 
       - name: Poetry build
         run: |
@@ -152,6 +146,3 @@ jobs:
 
       - name: Publish package distributions to testPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          skip-existing: true
-          repository-url: https://test.pypi.org/legacy/
