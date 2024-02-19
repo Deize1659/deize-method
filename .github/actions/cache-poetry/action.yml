@@ -14,7 +14,7 @@ runs:
   using: "composite"
   steps:
     - name: "Checkout"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v5
@@ -22,7 +22,7 @@ runs:
         python-version: ${{ inputs.python-version }}
 
     - name: "Cache-Poetry"
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ~/.local
         key: ${{ runner.os }}-poetry-${{ inputs.poetry-version }}-${{ inputs.poetry-dynamic-version }}-${{ inputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
