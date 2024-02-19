@@ -39,7 +39,7 @@ runs:
     - name: Install dependencies
       if: steps.cache-packages.outputs.cache-hit != 'true'
       run: |
-        $VIRTUALENVS_CREATE = ${{virtualenvs_create}}
-        $VIRTUALENVS_IN_PROJECT = ${{virtualenvs_in_project}}
+        $VIRTUALENVS_CREATE = ${{ inputs.virtualenvs_create }}
+        $VIRTUALENVS_IN_PROJECT = ${{ inputs.virtualenvs_in_project }}
         poetry install
       shell: bash
