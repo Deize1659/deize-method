@@ -221,131 +221,141 @@ class TestDirectoryListingPathlib(unittest.TestCase):
         return super().tearDownClass()
 
     def test_file_listing(self) -> None:
-        self.assertEqual(dlp.file_listing(self.test_dir), (self.test_txt, self.test_wav))
-        self.assertEqual(dlp.file_listing(self.test_dir, self.text_ext), (self.test_txt,))
-        self.assertEqual(dlp.file_listing(self.test_dir, (self.text_ext,)), (self.test_txt,))
-        self.assertEqual(dlp.file_listing(self.test_dir, self.wav_ext), (self.test_wav,))
-        self.assertEqual(dlp.file_listing(self.test_dir, (self.wav_ext,)), (self.test_wav,))
+        self.assertEqual(dlp.file_listing_path(self.test_dir), (self.test_txt, self.test_wav))
+        self.assertEqual(dlp.file_listing_path(self.test_dir, self.text_ext), (self.test_txt,))
+        self.assertEqual(dlp.file_listing_path(self.test_dir, (self.text_ext,)), (self.test_txt,))
+        self.assertEqual(dlp.file_listing_path(self.test_dir, self.wav_ext), (self.test_wav,))
+        self.assertEqual(dlp.file_listing_path(self.test_dir, (self.wav_ext,)), (self.test_wav,))
         self.assertEqual(
-            dlp.file_listing(self.test_dir, (self.text_ext, self.wav_ext)), (self.test_txt, self.test_wav)
+            dlp.file_listing_path(self.test_dir, (self.text_ext, self.wav_ext)), (self.test_txt, self.test_wav)
         )
-        self.assertEqual(dlp.file_listing(self.test_dir, "error"), ())
-        self.assertEqual(dlp.file_listing(self.test_dir, exc_targets=self.test_txt), (self.test_wav,))
-        self.assertEqual(dlp.file_listing(self.test_dir, exc_targets=(self.test_txt,)), (self.test_wav,))
-        self.assertEqual(dlp.file_listing(self.test_dir, exc_targets=self.test_wav), (self.test_txt,))
-        self.assertEqual(dlp.file_listing(self.test_dir, exc_targets=(self.test_wav,)), (self.test_txt,))
-        self.assertEqual(dlp.file_listing(self.test_dir, exc_targets=(self.test_txt, self.test_wav)), ())
-        self.assertEqual(dlp.file_listing(self.test_dir, exc_targets="error"), (self.test_txt, self.test_wav))
+        self.assertEqual(dlp.file_listing_path(self.test_dir, "error"), ())
+        self.assertEqual(dlp.file_listing_path(self.test_dir, exc_targets=self.test_txt), (self.test_wav,))
+        self.assertEqual(dlp.file_listing_path(self.test_dir, exc_targets=(self.test_txt,)), (self.test_wav,))
+        self.assertEqual(dlp.file_listing_path(self.test_dir, exc_targets=self.test_wav), (self.test_txt,))
+        self.assertEqual(dlp.file_listing_path(self.test_dir, exc_targets=(self.test_wav,)), (self.test_txt,))
+        self.assertEqual(dlp.file_listing_path(self.test_dir, exc_targets=(self.test_txt, self.test_wav)), ())
+        self.assertEqual(dlp.file_listing_path(self.test_dir, exc_targets="error"), (self.test_txt, self.test_wav))
 
     def test_dir_listing(self) -> None:
-        self.assertEqual(dlp.dir_listing(self.test_dir), (self.test1, self.test2))
-        self.assertEqual(dlp.dir_listing(self.test_dir, self.test1_num), (self.test1,))
-        self.assertEqual(dlp.dir_listing(self.test_dir, (self.test1_num,)), (self.test1,))
-        self.assertEqual(dlp.dir_listing(self.test_dir, self.test2_num), (self.test2,))
-        self.assertEqual(dlp.dir_listing(self.test_dir, (self.test2_num,)), (self.test2,))
-        self.assertEqual(dlp.dir_listing(self.test_dir, (self.test1_num, self.test2_num)), (self.test1, self.test2))
-        self.assertEqual(dlp.dir_listing(self.test_dir, "error"), ())
-        self.assertEqual(dlp.dir_listing(self.test_dir, exc_targets=self.test1), (self.test2,))
-        self.assertEqual(dlp.dir_listing(self.test_dir, exc_targets=(self.test1,)), (self.test2,))
-        self.assertEqual(dlp.dir_listing(self.test_dir, exc_targets=self.test2), (self.test1,))
-        self.assertEqual(dlp.dir_listing(self.test_dir, exc_targets=(self.test2,)), (self.test1,))
-        self.assertEqual(dlp.dir_listing(self.test_dir, exc_targets=(self.test1, self.test2)), ())
-        self.assertEqual(dlp.dir_listing(self.test_dir, exc_targets="error"), (self.test1, self.test2))
+        self.assertEqual(dlp.dir_listing_path(self.test_dir), (self.test1, self.test2))
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, self.test1_num), (self.test1,))
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, (self.test1_num,)), (self.test1,))
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, self.test2_num), (self.test2,))
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, (self.test2_num,)), (self.test2,))
+        self.assertEqual(
+            dlp.dir_listing_path(self.test_dir, (self.test1_num, self.test2_num)), (self.test1, self.test2)
+        )
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, "error"), ())
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, exc_targets=self.test1), (self.test2,))
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, exc_targets=(self.test1,)), (self.test2,))
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, exc_targets=self.test2), (self.test1,))
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, exc_targets=(self.test2,)), (self.test1,))
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, exc_targets=(self.test1, self.test2)), ())
+        self.assertEqual(dlp.dir_listing_path(self.test_dir, exc_targets="error"), (self.test1, self.test2))
 
     def test_all_listing(self) -> None:
-        self.assertEqual(dlp.all_listing(self.test_dir), (self.test1, self.test2, self.test_txt, self.test_wav))
-        self.assertEqual(dlp.all_listing(self.test_dir, self.test1_num), (self.test1,))
-        self.assertEqual(dlp.all_listing(self.test_dir, (self.test1_num,)), (self.test1,))
-        self.assertEqual(dlp.all_listing(self.test_dir, self.test2_num), (self.test2,))
-        self.assertEqual(dlp.all_listing(self.test_dir, (self.test2_num,)), (self.test2,))
-        self.assertEqual(dlp.all_listing(self.test_dir, self.text_ext), (self.test_txt,))
-        self.assertEqual(dlp.all_listing(self.test_dir, (self.text_ext,)), (self.test_txt,))
-        self.assertEqual(dlp.all_listing(self.test_dir, self.wav_ext), (self.test_wav,))
-        self.assertEqual(dlp.all_listing(self.test_dir, (self.wav_ext,)), (self.test_wav,))
-        self.assertEqual(dlp.all_listing(self.test_dir, (self.test1_num, self.test2_num)), (self.test1, self.test2))
-        self.assertEqual(dlp.all_listing(self.test_dir, (self.test1_num, self.wav_ext)), (self.test1, self.test_wav))
-        self.assertEqual(dlp.all_listing(self.test_dir, (self.test2_num, self.text_ext)), (self.test2, self.test_txt))
-        self.assertEqual(dlp.all_listing(self.test_dir, (self.text_ext, self.wav_ext)), (self.test_txt, self.test_wav))
+        self.assertEqual(dlp.all_listing_path(self.test_dir), (self.test1, self.test2, self.test_txt, self.test_wav))
+        self.assertEqual(dlp.all_listing_path(self.test_dir, self.test1_num), (self.test1,))
+        self.assertEqual(dlp.all_listing_path(self.test_dir, (self.test1_num,)), (self.test1,))
+        self.assertEqual(dlp.all_listing_path(self.test_dir, self.test2_num), (self.test2,))
+        self.assertEqual(dlp.all_listing_path(self.test_dir, (self.test2_num,)), (self.test2,))
+        self.assertEqual(dlp.all_listing_path(self.test_dir, self.text_ext), (self.test_txt,))
+        self.assertEqual(dlp.all_listing_path(self.test_dir, (self.text_ext,)), (self.test_txt,))
+        self.assertEqual(dlp.all_listing_path(self.test_dir, self.wav_ext), (self.test_wav,))
+        self.assertEqual(dlp.all_listing_path(self.test_dir, (self.wav_ext,)), (self.test_wav,))
         self.assertEqual(
-            dlp.all_listing(self.test_dir, (self.test1_num, self.test2_num, self.text_ext)),
+            dlp.all_listing_path(self.test_dir, (self.test1_num, self.test2_num)), (self.test1, self.test2)
+        )
+        self.assertEqual(
+            dlp.all_listing_path(self.test_dir, (self.test1_num, self.wav_ext)), (self.test1, self.test_wav)
+        )
+        self.assertEqual(
+            dlp.all_listing_path(self.test_dir, (self.test2_num, self.text_ext)), (self.test2, self.test_txt)
+        )
+        self.assertEqual(
+            dlp.all_listing_path(self.test_dir, (self.text_ext, self.wav_ext)), (self.test_txt, self.test_wav)
+        )
+        self.assertEqual(
+            dlp.all_listing_path(self.test_dir, (self.test1_num, self.test2_num, self.text_ext)),
             (self.test1, self.test2, self.test_txt),
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, (self.test1_num, self.test2_num, self.wav_ext)),
+            dlp.all_listing_path(self.test_dir, (self.test1_num, self.test2_num, self.wav_ext)),
             (self.test1, self.test2, self.test_wav),
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, (self.test1_num, self.text_ext, self.wav_ext)),
+            dlp.all_listing_path(self.test_dir, (self.test1_num, self.text_ext, self.wav_ext)),
             (self.test1, self.test_txt, self.test_wav),
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, (self.test2_num, self.text_ext, self.wav_ext)),
+            dlp.all_listing_path(self.test_dir, (self.test2_num, self.text_ext, self.wav_ext)),
             (self.test2, self.test_txt, self.test_wav),
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, (self.test1_num, self.test2_num, self.text_ext, self.wav_ext)),
+            dlp.all_listing_path(self.test_dir, (self.test1_num, self.test2_num, self.text_ext, self.wav_ext)),
             (self.test1, self.test2, self.test_txt, self.test_wav),
         )
-        self.assertEqual(dlp.all_listing(self.test_dir, "error"), ())
+        self.assertEqual(dlp.all_listing_path(self.test_dir, "error"), ())
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=self.test1), (self.test2, self.test_txt, self.test_wav)
+            dlp.all_listing_path(self.test_dir, exc_targets=self.test1), (self.test2, self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test1,)), (self.test2, self.test_txt, self.test_wav)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test1,)), (self.test2, self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=self.test2), (self.test1, self.test_txt, self.test_wav)
+            dlp.all_listing_path(self.test_dir, exc_targets=self.test2), (self.test1, self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test2,)), (self.test1, self.test_txt, self.test_wav)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test2,)), (self.test1, self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=self.test_txt), (self.test1, self.test2, self.test_wav)
+            dlp.all_listing_path(self.test_dir, exc_targets=self.test_txt), (self.test1, self.test2, self.test_wav)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test_txt,)), (self.test1, self.test2, self.test_wav)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test_txt,)), (self.test1, self.test2, self.test_wav)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=self.test_wav), (self.test1, self.test2, self.test_txt)
+            dlp.all_listing_path(self.test_dir, exc_targets=self.test_wav), (self.test1, self.test2, self.test_txt)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test_wav,)), (self.test1, self.test2, self.test_txt)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test_wav,)), (self.test1, self.test2, self.test_txt)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test1, self.test2)), (self.test_txt, self.test_wav)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test1, self.test2)), (self.test_txt, self.test_wav)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test1, self.test_txt)), (self.test2, self.test_wav)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test1, self.test_txt)), (self.test2, self.test_wav)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test1, self.test_wav)), (self.test2, self.test_txt)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test1, self.test_wav)), (self.test2, self.test_txt)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test2, self.test_txt)), (self.test1, self.test_wav)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test2, self.test_txt)), (self.test1, self.test_wav)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test2, self.test_wav)), (self.test1, self.test_txt)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test2, self.test_wav)), (self.test1, self.test_txt)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test_txt, self.test_wav)), (self.test1, self.test2)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test_txt, self.test_wav)), (self.test1, self.test2)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test1, self.test2, self.test_txt)), (self.test_wav,)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test1, self.test2, self.test_txt)), (self.test_wav,)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test1, self.test2, self.test_wav)), (self.test_txt,)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test1, self.test2, self.test_wav)), (self.test_txt,)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test1, self.test_txt, self.test_wav)), (self.test2,)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test1, self.test_txt, self.test_wav)), (self.test2,)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test2, self.test_txt, self.test_wav)), (self.test1,)
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test2, self.test_txt, self.test_wav)), (self.test1,)
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets=(self.test1, self.test2, self.test_txt, self.test_wav)), ()
+            dlp.all_listing_path(self.test_dir, exc_targets=(self.test1, self.test2, self.test_txt, self.test_wav)), ()
         )
         self.assertEqual(
-            dlp.all_listing(self.test_dir, exc_targets="error"),
+            dlp.all_listing_path(self.test_dir, exc_targets="error"),
             (self.test1, self.test2, self.test_txt, self.test_wav),
         )
 
