@@ -16,8 +16,8 @@ inputs:
 
 runs:
   env:
-    VIRTUALENVS_CREATE: ${{ input.virtualenvs_create}}
-    VIRTUALENVS_IN_PROJECT: ${{ input.virtualenvs_in_project}}
+    VIRTUALENVS_CREATE: ${{ inputs.virtualenvs_create}}
+    VIRTUALENVS_IN_PROJECT: ${{ inputs.virtualenvs_in_project}}
   using: "composite"
   steps:
     - name: "Checkout"
