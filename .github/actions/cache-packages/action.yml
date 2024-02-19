@@ -21,7 +21,7 @@ runs:
       run: echo $VIRTUALENVS_CREATE
       shell: bash
 
-      - name: "Checkout"
+    - name: "Checkout"
       uses: actions/checkout@v2
 
     - name: Set up Python ${{ inputs.python-version }}
