@@ -1,0 +1,151 @@
+name: Python-Format-Lint-Test-Publish
+
+env:
+  VIRTUALENVS_CREATE: true
+  VIRTUALENVS_IN_PROJECT: true
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+jobs:
+  SetGlovalConstants:
+    runs-on: ubuntu-latest
+    outputs:
+      PYTHON_312_VERSION: 3.12.2
+      POETRY_VERSION: 1.7.1
+      POETRY_DYNAMIC_VERSIONING_VERSION: 1.2.0
+    steps:
+      - run: echo 'Setting constans.'
+
+  Build:
+    runs-on: ubuntu-latest
+    needs: SetGlovalConstants
+    strategy:
+      matrix:
+        python-version:
+          ["${{ needs.SetGlovalConstants.outputs.PYTHON_312_VERSION }}"]
+        poetry-version:
+          ["${{ needs.SetGlovalConstants.outputs.POETRY_VERSION }}"]
+        poetry-dynamic-versioning-version:
+          [
+            "${{ needs.SetGlovalConstants.outputs.POETRY_DYNAMIC_VERSIONING_VERSION }}",
+          ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry and Cache
+        uses: ./.github/actions/cache-poetry
+        with:
+          python-version: ${{ matrix.python-version }}
+          poetry-version: ${{ matrix.poetry-version }}
+          poetry-dynamic-versioning-version: ${{ matrix.poetry-dynamic-versioning-version }}
+
+      - name: Install dependencies and Cache
+        uses: ./.github/actions/cache-packages
+        with:
+          python-version: ${{ matrix.python-version }}
+
+  FormatLintCommit:
+    needs: [Build, SetGlovalConstants]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          ["${{ needs.SetGlovalConstants.outputs.PYTHON_312_VERSION }}"]
+        poetry-version:
+          ["${{ needs.SetGlovalConstants.outputs.POETRY_VERSION }}"]
+        poetry-dynamic-versioning-version:
+          [
+            "${{ needs.SetGlovalConstants.outputs.POETRY_DYNAMIC_VERSIONING_VERSION }}",
+          ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry and Cache
+        uses: ./.github/actions/cache-poetry
+        with:
+          python-version: ${{ matrix.python-version }}
+          poetry-version: ${{ matrix.poetry-version }}
+          poetry-dynamic-versioning-version: ${{ matrix.poetry-dynamic-versioning-version }}
+
+      - name: Install dependencies and Cache
+        uses: ./.github/actions/cache-packages
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run format
+        run: |
+          poetry run black tests src
+          poetry run isort tests src
+
+      - name: Run lint
+        run: |
+          poetry run flake8 tests src
+          poetry run mypy tests src
+
+      - name: Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Apply Code Formatter Change
+
+  Publish:
+    needs: [FormatLintCommit, SetGlovalConstants]
+    runs-on: ubuntu-latest
+    environment:
+      name: release
+      url: https://pypi.org/p/deize-method
+    permissions:
+      id-token: write
+    strategy:
+      matrix:
+        python-version:
+          ["${{ needs.SetGlovalConstants.outputs.PYTHON_312_VERSION }}"]
+        poetry-version:
+          ["${{ needs.SetGlovalConstants.outputs.POETRY_VERSION }}"]
+        poetry-dynamic-versioning-version:
+          [
+            "${{ needs.SetGlovalConstants.outputs.POETRY_DYNAMIC_VERSIONING_VERSION }}",
+          ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry and Cache
+        uses: ./.github/actions/cache-poetry
+        with:
+          python-version: ${{ matrix.python-version }}
+          poetry-version: ${{ matrix.poetry-version }}
+          poetry-dynamic-versioning-version: ${{ matrix.poetry-dynamic-versioning-version }}
+
+      - name: Install dependencies and Cache
+        uses: ./.github/actions/cache-packages
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Poetry build
+        run: |
+          poetry build
+
+      - name: Publish package distributions to testPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
