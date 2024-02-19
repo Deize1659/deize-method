@@ -1,8 +1,8 @@
 name: Python-Format-Lint-Test-Publish
 
 env:
-  VIRTUALENVS_CREATE: true
-  VIRTUALENVS_IN_PROJECT: true
+  POETRY_VIRTUALENVS_CREATE: true
+  POETRY_VIRTUALENVS_IN_PROJECT: true
 
 on:
   push:
