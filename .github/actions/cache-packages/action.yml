@@ -2,25 +2,29 @@ name: "Package-Setup"
 inputs:
   python-version:
     description: "Python version"
-    required: true
+    required: false
 
   virtualenvs_create:
     description: ""
-    required: false
+    required: true
     default: true
 
   virtualenvs_in_project:
     description: ""
-    required: false
+    required: true
     default: true
-
-env:
-  VIRTUALENVS_CREATE: ${{ inputs.virtualenvs_create}}
-  VIRTUALENVS_IN_PROJECT: ${{ inputs.virtualenvs_in_project}}
 
 runs:
   using: "composite"
   steps:
+    - name:
+      run: echo $VIRTUALENVS_CREATE
+      shell: bash
+
+    - env:
+      VIRTUALENVS_CREATE: ${{ inputs.virtualenvs_create}}
+      VIRTUALENVS_IN_PROJECT: ${{ inputs.virtualenvs_in_project}}
+
     - name: "Checkout"
       uses: actions/checkout@v2
 
