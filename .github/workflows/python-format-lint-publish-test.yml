@@ -1,8 +1,8 @@
 name: Python-Format-Lint-Test-Publish-Test
 
 env:
-  VIRTUALENVS_CREATE: true
-  VIRTUALENVS_IN_PROJECT: true
+  POETRY_VIRTUALENVS_CREATE: true
+  POETRY_VIRTUALENVS_IN_PROJECT: true
 
 on:
   pull_request:
@@ -53,8 +53,6 @@ jobs:
         uses: ./.github/actions/cache-packages
         with:
           python-version: ${{ matrix.python-version }}
-          virtualenvs_create: ${{ env.VIRTUALENVS_CREATE}}
-          virtualenvs_in_project: ${{ env.VIRTUALENVS_IN_PROJECT}}
 
   FormatLintCommit:
     needs: [Build, SetGlovalConstants]
@@ -90,8 +88,6 @@ jobs:
         uses: ./.github/actions/cache-packages
         with:
           python-version: ${{ matrix.python-version }}
-          virtualenvs_create: ${{ env.VIRTUALENVS_CREATE}}
-          virtualenvs_in_project: ${{ env.VIRTUALENVS_IN_PROJECT}}
 
       - name: Run format
         run: |
@@ -144,8 +140,6 @@ jobs:
         uses: ./.github/actions/cache-packages
         with:
           python-version: ${{ matrix.python-version }}
-          virtualenvs_create: ${{ env.VIRTUALENVS_CREATE}}
-          virtualenvs_in_project: ${{ env.VIRTUALENVS_IN_PROJECT}}
 
       - name: Poetry build
         run: |
