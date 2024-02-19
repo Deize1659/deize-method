@@ -79,7 +79,7 @@ jobs:
       - name: Install Poetry and Cache
         uses: ./.github/actions/cache-poetry
         with:
-          pyhon-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}
           poetry-version: ${{ matrix.poetry-version }}
           poetry-dynamic-versioning-version: ${{ matrix.poetry-dynamic-versioning-version }}
 
@@ -131,7 +131,7 @@ jobs:
       - name: Install Poetry and Cache
         uses: ./.github/actions/cache-poetry
         with:
-          pyhon-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}
           poetry-version: ${{ matrix.poetry-version }}
           poetry-dynamic-versioning-version: ${{ matrix.poetry-dynamic-versioning-version }}
 
