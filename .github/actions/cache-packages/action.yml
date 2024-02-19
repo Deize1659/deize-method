@@ -5,7 +5,7 @@ inputs:
     required: true
 
   virtualenvs_create:
-    descreption: ""
+    description: ""
     required: false
     default: true
 
