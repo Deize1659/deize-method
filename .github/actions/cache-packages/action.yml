@@ -4,7 +4,20 @@ inputs:
     description: "Python version"
     required: true
 
+  virtualenvs_create:
+    descreption: ""
+    required: false
+    default: true
+
+  virtualenvs_in_project:
+    description: ""
+    required: false
+    default: true
+
 runs:
+  env:
+    VIRTUALENVS_CREATE: ${{ input.virtualenvs_create}}
+    VIRTUALENVS_IN_PROJECT: ${{ input.virtualenvs_in_project}}
   using: "composite"
   steps:
     - name: "Checkout"
@@ -23,5 +36,6 @@ runs:
         key: poetry-local-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/main.yml') }}
 
     - name: Install dependencies
+      if: steps.cache-packages.outputs.cache-hit != 'true'
       run: poetry install
       shell: bash
