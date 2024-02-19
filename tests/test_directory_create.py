@@ -1,5 +1,3 @@
-import os
-import sys
 import unittest
 
 from src.my_method.directory_create import directory_create

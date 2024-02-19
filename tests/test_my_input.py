@@ -1,5 +1,3 @@
-import os
-import sys
 import unittest
 
 from src.my_method.my_input import input_int  # noqa: E402
