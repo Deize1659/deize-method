@@ -59,6 +59,10 @@ class ReadWavNdarray(WavNdarray):
     def frames(self) -> int:
         return self._frames
 
+    @property
+    def tell(self) -> int:
+        return self._rf.tell()
+
     def read_all(self) -> np.ndarray:
         """
         WAVファイルの全フレームを読み込み、NumPy配列として返します。
