@@ -149,3 +149,66 @@ class ReadWavNdarray(WavNdarray):
         WAVファイルの読み込みを終了し、リソースを解放します。
         """
         self._rf.close()
+
+
+class WriteWavNdarray(WavNdarray):
+    def __init__(self, wav_path: Path, rate: int, width: int, channels: int) -> None:
+        super().__init__(wav_path)
+        self._width = width
+        self._queue: queue.Queue[Optional[bytes]] = queue.Queue()
+        self._lock = threading.Lock()
+        with self._lock:
+            self._wf = wave.open(str(wav_path), "wb")
+            self._wf.setnchannels(channels)
+            self._wf.setsampwidth(width)
+            self._wf.setframerate(rate)
+        self.thread_start()
+
+    def __del__(self) -> None:
+        self.write_end()
+
+    def __enter__(self) -> "WriteWavNdarray":
+        return self
+
+    def __exit__(self, exc_type: str, exc_value: str, traceback: str) -> None:
+        if exc_type is not None:
+            print(exc_type, exc_value, traceback)
+        self.write_end()
+
+    def thread_start(self) -> None:
+        self._thread = threading.Thread(target=self.write_thread, daemon=True)
+        self._thread.start()
+
+    def write(self, array: np.ndarray) -> None:
+        self._queue.put(self._ndarray_to_byte(array))
+
+    def write_thread(self) -> None:
+        while True:
+            data = self._queue.get()
+            if data is None:
+                break
+            with self._lock:
+                try:
+                    self._wf.writeframes(data)
+                except wave.Error:
+                    break
+
+    def _ndarray_to_byte(self, array: np.ndarray) -> bytes:
+        if self._width == self.INT16 or self._width == self.INT24:
+            byte = array.tobytes()
+            array = np.frombuffer(memoryview(byte), dtype=np.int8).reshape(-1, 4)
+            array = np.delete(array, 3, axis=1)
+            if self._width == self.INT16:
+                array = np.delete(array, 2, axis=1)
+        return array.tobytes()
+
+    def write_end(self) -> None:
+        self._queue.put(None)
+        self._thread.join()
+        with self._lock:
+            self._wf.close()
+
+    def write_force_end(self) -> None:
+        self._queue.put(None)
+        with self._lock:
+            self._wf.close()

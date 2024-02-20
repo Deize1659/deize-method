@@ -1,3 +1,3 @@
-from .wav_ndarray import ReadWavNdarray
+from .wav_ndarray import ReadWavNdarray, WriteWavNdarray
 
-__all__ = ["ReadWavNdarray"]
+__all__ = ["ReadWavNdarray", "WriteWavNdarray"]
