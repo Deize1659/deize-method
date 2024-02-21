@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Final, Optional, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
 __all__ = [
     "os",
@@ -26,4 +27,5 @@ __all__ = [
     "wave",
     "threading",
     "queue",
+    "NDArray",
 ]

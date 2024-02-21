@@ -5,6 +5,7 @@ from typing import Any, Generator
 
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 
 from my_method.wav_ndarray.wav_ndarray import (
     ReadWavNdarray,
@@ -58,17 +59,17 @@ def write_setup(scope_session: Path) -> Generator[Any, Any, Any]:
 
 
 class TestReadWavNdarray:
-    def test_read_params(self, scope_session: Path, scope_class: tuple[np.ndarray, tuple[int, ...]]) -> None:
+    def test_read_params(self, scope_session: Path, scope_class: tuple[NDArray[np.int32], tuple[int, ...]]) -> None:
         with ReadWavNdarray(scope_session) as rwn:
             assert rwn.channels == scope_class[1][0]
             assert rwn.rate == scope_class[1][1]
             assert rwn.frames == scope_class[1][2]
 
-    def test_read_all(self, scope_session: Path, scope_class: tuple[np.ndarray, tuple[int, ...]]) -> None:
+    def test_read_all(self, scope_session: Path, scope_class: tuple[NDArray[np.int32], tuple[int, ...]]) -> None:
         with ReadWavNdarray(scope_session) as rwn:
             assert np.all(rwn.read_all() == scope_class[0])
 
-    def test_read_frames(self, scope_session: Path, scope_class: tuple[np.ndarray, tuple[int, ...]]) -> None:
+    def test_read_frames(self, scope_session: Path, scope_class: tuple[NDArray[np.int32], tuple[int, ...]]) -> None:
         start_pos = 10
         end_pos = 20
         read_frame = 10
@@ -89,7 +90,7 @@ class TestReadWavNdarray:
 
 
 class TestWriteWavNdarray:
-    def test_write(self, write_setup: Path, scope_class: tuple[np.ndarray, tuple[int, ...]]) -> None:
-        with WriteWavNdarray(write_setup, 44100, WavNdarray.INT16, 1) as wwn:
+    def test_write(self, write_setup: Path, scope_class: tuple[NDArray[np.int32], tuple[int, ...]]) -> None:
+        with WriteWavNdarray(write_setup, scope_class[1][1], WavNdarray.INT16, scope_class[1][0]) as wwn:
             wwn.write(scope_class[0])
         assert np.all(ReadWavNdarray(write_setup).read_all() == scope_class[0])
