@@ -1,4 +1,4 @@
-from ..common import Final, Optional, Path, np, queue, threading, wave
+from ..common import Final, NDArray, Optional, Path, np, queue, threading, wave
 
 
 class WavNdarray:
@@ -63,7 +63,7 @@ class ReadWavNdarray(WavNdarray):
     def tell(self) -> int:
         return self._rf.tell()
 
-    def read_all(self) -> np.ndarray:
+    def read_all(self) -> NDArray[np.int32]:
         """
         WAVファイルの全フレームを読み込み、NumPy配列として返します。
 
@@ -77,7 +77,7 @@ class ReadWavNdarray(WavNdarray):
 
     def read_frames(
         self, start_frame: int, end_frame: Optional[int] = None, read_frame: Optional[int] = None
-    ) -> np.ndarray:
+    ) -> NDArray[np.int32]:
         """
         指定した範囲のフレームを読み込み、NumPy配列として返します。\n
         end_frame と read_frame は同時にセットできません。\n
@@ -122,7 +122,7 @@ class ReadWavNdarray(WavNdarray):
         self._rf.setpos(start_frame)
         return self._byte_to_ndarray(self._rf.readframes(read_frame))
 
-    def _byte_to_ndarray(self, byte: bytes) -> np.ndarray:
+    def _byte_to_ndarray(self, byte: bytes) -> NDArray[np.int32]:
         """
         bytes型をNumPy配列に変換します。
 
@@ -146,7 +146,7 @@ class ReadWavNdarray(WavNdarray):
             condition = array[:, self._width - 1] < 0
             array[condition, self._width :] = 0xFF
             byte = array.tobytes()
-        return np.frombuffer(memoryview(byte), dtype=np.int32).reshape(-1, self._width)
+        return np.frombuffer(memoryview(byte), dtype=np.int32).reshape(-1, self._channels)
 
     def read_end(self) -> None:
         """
@@ -183,7 +183,7 @@ class WriteWavNdarray(WavNdarray):
         self._thread = threading.Thread(target=self.write_thread, daemon=True)
         self._thread.start()
 
-    def write(self, array: np.ndarray) -> None:
+    def write(self, array: NDArray[np.int32]) -> None:
         self._queue.put(self._ndarray_to_byte(array))
 
     def write_thread(self) -> None:
@@ -197,7 +197,7 @@ class WriteWavNdarray(WavNdarray):
                 except wave.Error:
                     break
 
-    def _ndarray_to_byte(self, array: np.ndarray) -> bytes:
+    def _ndarray_to_byte(self, array: NDArray[np.int32]) -> bytes:
         if self._width == self.INT16 or self._width == self.INT24:
             byte = array.tobytes()
             array = np.frombuffer(memoryview(byte), dtype=np.int8).reshape(-1, 4)
