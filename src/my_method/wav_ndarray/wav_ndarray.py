@@ -146,7 +146,7 @@ class ReadWavNdarray(WavNdarray):
             condition = array[:, self._width - 1] < 0
             array[condition, self._width :] = 0xFF
             byte = array.tobytes()
-        return np.frombuffer(memoryview(byte), dtype=np.int32)
+        return np.frombuffer(memoryview(byte), dtype=np.int32).reshape(-1, self._width)
 
     def read_end(self) -> None:
         """
