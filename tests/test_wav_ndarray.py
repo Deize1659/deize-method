@@ -1,10 +1,10 @@
+import wave
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, Generator
 
 import numpy as np
 import pytest
-from scipy.io.wavfile import write
 
 from my_method.wav_ndarray.wav_ndarray import (
     ReadWavNdarray,
@@ -29,11 +29,24 @@ def scope_class(scope_session: Path) -> Generator[Any, Any, Any]:
     sample_rate = 44100  # サンプルレート (Hz)
     freq = 1000  # 周波数 (Hz)
     duration = 10  # 持続時間 (秒)
+    channels = 2  # チャンネル数
     t = np.arange(sample_rate * duration)
     y = 0.5 * np.sin(2 * np.pi * freq * t / sample_rate)
-    ans = (y * 32767).astype(np.int32)
-    write(str(scope_session), sample_rate, ans.astype(np.int16))
-    yield (ans)
+    write = np.tile(y * 32767, (channels, 1)).T.astype(np.int16)
+    ans = write.astype(np.int32)
+    with wave.open(str(scope_session), "w") as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(2)
+        wf.setframerate(sample_rate)
+        wf.writeframes(write.tobytes())
+    yield (
+        ans,
+        (
+            channels,
+            sample_rate,
+            sample_rate * duration,
+        ),
+    )
     print("\nClass scope end")
 
 
@@ -45,23 +58,25 @@ def write_setup(scope_session: Path) -> Generator[Any, Any, Any]:
 
 
 class TestReadWavNdarray:
-    def test_read_all(self, scope_session: Path, scope_class: np.ndarray) -> None:
+    def test_read_params(self, scope_session: Path, scope_class: tuple[np.ndarray, tuple[int, ...]]) -> None:
         with ReadWavNdarray(scope_session) as rwn:
-            assert rwn.width == WavNdarray.INT16
-            assert rwn.channels == 1
-            assert rwn.rate == 44100
-            assert rwn.frames == 441000
-            assert np.all(rwn.read_all() == scope_class)
+            assert rwn.channels == scope_class[1][0]
+            assert rwn.rate == scope_class[1][1]
+            assert rwn.frames == scope_class[1][2]
 
-    def test_read_frames(self, scope_session: Path, scope_class: np.ndarray) -> None:
+    def test_read_all(self, scope_session: Path, scope_class: tuple[np.ndarray, tuple[int, ...]]) -> None:
+        with ReadWavNdarray(scope_session) as rwn:
+            assert np.all(rwn.read_all() == scope_class[0])
+
+    def test_read_frames(self, scope_session: Path, scope_class: tuple[np.ndarray, tuple[int, ...]]) -> None:
         start_pos = 10
         end_pos = 20
         read_frame = 10
         with ReadWavNdarray(scope_session) as rwn:
-            assert np.all(rwn.read_frames(start_pos) == scope_class[start_pos:])
-            assert np.all(rwn.read_frames(start_pos, end_frame=end_pos) == scope_class[start_pos:end_pos])
+            assert np.all(rwn.read_frames(start_pos) == scope_class[0][start_pos:])
+            assert np.all(rwn.read_frames(start_pos, end_frame=end_pos) == scope_class[0][start_pos:end_pos])
             assert np.all(
-                rwn.read_frames(start_pos, read_frame=read_frame) == scope_class[start_pos : start_pos + read_frame]
+                rwn.read_frames(start_pos, read_frame=read_frame) == scope_class[0][start_pos : start_pos + read_frame]
             )
             with pytest.raises(ValueError):
                 rwn.read_frames(start_pos, read_frame=-1)
@@ -74,7 +89,7 @@ class TestReadWavNdarray:
 
 
 class TestWriteWavNdarray:
-    def test_write(self, write_setup: Path, scope_class: np.ndarray) -> None:
+    def test_write(self, write_setup: Path, scope_class: tuple[np.ndarray, tuple[int, ...]]) -> None:
         with WriteWavNdarray(write_setup, 44100, WavNdarray.INT16, 1) as wwn:
-            wwn.write(scope_class)
-        assert np.all(ReadWavNdarray(write_setup).read_all() == scope_class)
+            wwn.write(scope_class[0])
+        assert np.all(ReadWavNdarray(write_setup).read_all() == scope_class[0])
