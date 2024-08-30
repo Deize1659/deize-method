@@ -108,7 +108,7 @@ jobs:
     needs: [FormatLintCommit, SetGlovalConstants]
     runs-on: ubuntu-latest
     environment:
-      name: release
+      name: test_release
       url: https://test.pypi.org/p/deize-method
     permissions:
       id-token: write
