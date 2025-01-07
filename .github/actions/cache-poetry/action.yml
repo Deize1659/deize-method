@@ -32,6 +32,6 @@ runs:
     - name: "Install-Poetry"
       shell: bash
       run: |
-        curl -sSL https://install.python-poetry.org | python3 -
+        curl -sSL https://install.python-poetry.org | python3 - --version ${{ inputs.poetry-version }}
         echo "$HOME/.local/bin" >> $GITHUB_PATH
         poetry self add poetry-dynamic-versioning[plugin]@${{ inputs.poetry-dynamic-versioning-version }}
