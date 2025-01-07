@@ -1,8 +1,11 @@
 name: "Package-Setup"
 inputs:
+  ref:
+    description: "Branch or Tag"
+    required: false
   python-version:
     description: "Python version"
-    required: false
+    required: true
 
 runs:
   using: "composite"
@@ -13,6 +16,8 @@ runs:
 
     - name: "Checkout"
       uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref || github.ref }}
 
     - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v5

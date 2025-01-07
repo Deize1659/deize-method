@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["deize"],
+  "cSpell.words": ["deize", "pypa", "stefanzweifel"],
   "[python]": {
     "editor.tabSize": 4,
     "editor.defaultFormatter": "ms-python.black-formatter",
