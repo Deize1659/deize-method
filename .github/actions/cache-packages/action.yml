@@ -2,7 +2,7 @@ name: "Package-Setup"
 inputs:
   python-version:
     description: "Python version"
-    required: false
+    required: true
 
 runs:
   using: "composite"
