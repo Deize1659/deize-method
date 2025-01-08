@@ -19,9 +19,10 @@ jobs:
   SetGlobalConstants:
     runs-on: ubuntu-22.04
     outputs:
-      PYTHON_312_VERSION: 3.12.2
-      POETRY_VERSION: 1.7.1
-      POETRY_DYNAMIC_VERSIONING_VERSION: 1.2.0
+      PYTHON_312_VERSION: 3.12
+      PYTHON_313_VERSION: 3.13
+      POETRY_VERSION: 2.0.0
+      POETRY_DYNAMIC_VERSIONING_VERSION: 1.5.0
     steps:
       - run: echo 'Setting constants.'
 
@@ -31,7 +32,10 @@ jobs:
     strategy:
       matrix:
         python-version:
-          ["${{ needs.SetGlobalConstants.outputs.PYTHON_312_VERSION }}"]
+          [
+            "${{ needs.SetGlobalConstants.outputs.PYTHON_312_VERSION }}",
+            "${{ needs.SetGlobalConstants.outputs.PYTHON_313_VERSION }}",
+          ]
         poetry-version:
           ["${{ needs.SetGlobalConstants.outputs.POETRY_VERSION }}"]
         poetry-dynamic-versioning-version:
@@ -69,7 +73,10 @@ jobs:
     strategy:
       matrix:
         python-version:
-          ["${{ needs.SetGlobalConstants.outputs.PYTHON_312_VERSION }}"]
+          [
+            "${{ needs.SetGlobalConstants.outputs.PYTHON_312_VERSION }}",
+            "${{ needs.SetGlobalConstants.outputs.PYTHON_313_VERSION }}",
+          ]
         poetry-version:
           ["${{ needs.SetGlobalConstants.outputs.POETRY_VERSION }}"]
         poetry-dynamic-versioning-version:
@@ -127,7 +134,10 @@ jobs:
     strategy:
       matrix:
         python-version:
-          ["${{ needs.SetGlobalConstants.outputs.PYTHON_312_VERSION }}"]
+          [
+            "${{ needs.SetGlobalConstants.outputs.PYTHON_312_VERSION }}",
+            "${{ needs.SetGlobalConstants.outputs.PYTHON_313_VERSION }}",
+          ]
         poetry-version:
           ["${{ needs.SetGlobalConstants.outputs.POETRY_VERSION }}"]
         poetry-dynamic-versioning-version:
