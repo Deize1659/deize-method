@@ -10,7 +10,7 @@ on:
       - "*.*.*"
 jobs:
   SetGlobalConstants:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       PYTHON_312_VERSION: 3.12.2
       POETRY_VERSION: 1.7.1
@@ -19,7 +19,7 @@ jobs:
       - run: echo 'Setting constants.'
 
   Build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: SetGlobalConstants
     strategy:
       matrix:
@@ -55,7 +55,7 @@ jobs:
 
   FormatLintCommit:
     needs: [Build, SetGlobalConstants]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version:
@@ -105,7 +105,7 @@ jobs:
 
   Publish:
     needs: [FormatLintCommit, SetGlobalConstants]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     environment:
       name: release
       url: https://pypi.org/p/deize-method
