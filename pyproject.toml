@@ -14,7 +14,7 @@ numpy = ">=1.26.4,<3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.7.1"
-isort = "^5.13.2"
+isort = ">=5.13.2,<7.0.0"
 black = ">=23.12,<26.0"
 ipykernel = "^6.27.1"
 flake8 = "^7.0.0"
